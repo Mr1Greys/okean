@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "Okeana Club"
+version = "1.0.0"
+id = "artifacts/okeana"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 19289
+
+[services.development]
+run = "pnpm --filter @workspace/okeana run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/okeana", "run", "build" ]
+publicDir = "artifacts/okeana/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "19289"
+BASE_PATH = "/"
