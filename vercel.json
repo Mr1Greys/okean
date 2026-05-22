@@ -1,7 +1,7 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "installCommand": "pnpm install",
-  "buildCommand": "pnpm --filter @workspace/okeana run build",
+  "buildCommand": "PORT=4173 BASE_PATH=/ pnpm --filter @workspace/okeana run build",
   "outputDirectory": "artifacts/okeana/dist/public",
   "framework": null,
   "env": {
