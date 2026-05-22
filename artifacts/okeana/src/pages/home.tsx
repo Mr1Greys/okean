@@ -50,7 +50,7 @@ export default function Home() {
       {/* Hero Section */}
       <section className="relative h-[90vh] min-h-[600px] flex items-center justify-center overflow-hidden bg-gradient-to-b from-primary/10 to-background">
         <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1519682577862-22b62b24e493?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center opacity-10 mix-blend-overlay"></div>
-        <div className="container px-4 relative z-10 text-center flex flex-col items-center">
+        <div className="container mx-auto px-4 relative z-10 text-center flex flex-col items-center max-w-6xl">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -87,7 +87,7 @@ export default function Home() {
 
       {/* Promo Banner */}
       <section className="bg-accent/10 border-y border-accent/20">
-        <div className="container px-4 py-4">
+        <div className="container mx-auto px-4 py-4 max-w-6xl">
           <p className="text-center text-accent-foreground/80 font-medium">
             ✨ 10% скидка и без вступительного взноса при заключении договора в октябре
           </p>
@@ -96,8 +96,8 @@ export default function Home() {
 
       {/* Advantages Strip */}
       <section className="py-16 md:py-24 bg-background">
-        <div className="container px-4">
-          <div className="flex overflow-x-auto pb-8 -mx-4 px-4 snap-x snap-mandatory hide-scrollbar gap-4 md:grid md:grid-cols-5 md:gap-6 md:pb-0 md:mx-0 md:px-0">
+        <div className="container mx-auto px-4 max-w-6xl">
+          <div className="flex overflow-x-auto pb-8 snap-x snap-mandatory hide-scrollbar gap-4 md:grid md:grid-cols-5 md:gap-6 md:pb-0 justify-center">
             {ADVANTAGES.map((adv, i) => (
               <div key={i} className="min-w-[200px] snap-center flex flex-col items-center text-center p-6 rounded-2xl bg-secondary/30">
                 <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-primary mb-4">
@@ -113,7 +113,7 @@ export default function Home() {
 
       {/* Programs Preview */}
       <section className="py-16 md:py-24 bg-secondary/20">
-        <div className="container px-4">
+        <div className="container mx-auto px-4 max-w-6xl">
           <div className="flex justify-between items-end mb-12">
             <div>
               <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Наши программы</h2>
@@ -156,7 +156,7 @@ export default function Home() {
 
       {/* FAQ */}
       <section className="py-16 md:py-24 bg-background">
-        <div className="container px-4 max-w-3xl">
+        <div className="container mx-auto px-4 max-w-3xl">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">Частые вопросы</h2>
           <Accordion type="single" collapsible className="w-full">
             {FAQS.map((faq, i) => (
@@ -175,7 +175,7 @@ export default function Home() {
 
       {/* Contacts Block */}
       <section className="py-16 md:py-24 bg-primary text-primary-foreground">
-        <div className="container px-4">
+        <div className="container mx-auto px-4 max-w-6xl">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
               <h2 className="text-3xl md:text-4xl font-bold mb-8 text-white">Ждём вас в гости</h2>

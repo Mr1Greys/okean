@@ -154,7 +154,7 @@ export default function Programs() {
     <div className="flex flex-col">
       {/* Header */}
       <section className="py-20 md:py-28 bg-gradient-to-b from-secondary/40 to-background">
-        <div className="container px-4 max-w-3xl mx-auto text-center">
+        <div className="container mx-auto px-4 max-w-3xl text-center">
           <motion.div {...fadeUp}>
             <span className="inline-block px-4 py-1.5 mb-6 rounded-full bg-primary/10 text-primary font-semibold text-sm">
               Программы
@@ -171,7 +171,7 @@ export default function Programs() {
 
       {/* Tabs */}
       <section className="sticky top-16 z-30 bg-background border-b border-border">
-        <div className="container px-4">
+        <div className="container mx-auto px-4 max-w-6xl">
           <div className="flex gap-1 overflow-x-auto py-3 scrollbar-hide">
             {TABS.map((tab) => (
               <button
@@ -193,7 +193,7 @@ export default function Programs() {
 
       {/* Cards */}
       <section className="py-12 md:py-20 bg-background">
-        <div className="container px-4 max-w-6xl mx-auto">
+        <div className="container mx-auto px-4 max-w-6xl">
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {filtered.map((prog, i) => (
               <motion.div

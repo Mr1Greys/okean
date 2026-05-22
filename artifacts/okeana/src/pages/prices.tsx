@@ -215,7 +215,7 @@ export default function Prices() {
     <div className="flex flex-col">
       {/* Header */}
       <section className="py-20 md:py-28 bg-gradient-to-b from-secondary/40 to-background">
-        <div className="container px-4 max-w-3xl mx-auto text-center">
+        <div className="container mx-auto px-4 max-w-3xl text-center">
           <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
             <span className="inline-block px-4 py-1.5 mb-6 rounded-full bg-primary/10 text-primary font-semibold text-sm">
               Цены
@@ -232,7 +232,7 @@ export default function Prices() {
 
       {/* Main tabs */}
       <section className="sticky top-16 z-30 bg-background border-b border-border">
-        <div className="container px-4">
+        <div className="container mx-auto px-4 max-w-6xl">
           <div className="flex gap-2 py-3">
             {[{ id: "pool" as MainTab, label: "Бассейн" }, { id: "hall" as MainTab, label: "Зал" }].map((t) => (
               <button
@@ -255,7 +255,7 @@ export default function Prices() {
       {/* Pool sub-tabs */}
       {mainTab === "pool" && (
         <div className="bg-background border-b border-border/50">
-          <div className="container px-4">
+          <div className="container mx-auto px-4 max-w-6xl">
             <div className="flex gap-2 py-2">
               {[{ id: "group" as PoolTab, label: "Групповые" }, { id: "individual" as PoolTab, label: "Индивидуальные" }].map((t) => (
                 <button
@@ -278,7 +278,7 @@ export default function Prices() {
 
       {/* Cards */}
       <section className="py-10 md:py-16 bg-background">
-        <div className="container px-4 max-w-6xl mx-auto">
+        <div className="container mx-auto px-4 max-w-6xl">
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {mainTab === "pool" && poolTab === "group" && GROUP_CARDS.map((c) => <PriceCardComp key={c.title} card={c} />)}
             {mainTab === "pool" && poolTab === "individual" && INDIVIDUAL_CARDS.map((c) => <PriceCardComp key={c.title} card={c} />)}
@@ -289,7 +289,7 @@ export default function Prices() {
 
       {/* Cancellation policy */}
       <section className="pb-16 bg-background">
-        <div className="container px-4 max-w-3xl mx-auto">
+        <div className="container mx-auto px-4 max-w-3xl">
           <div className="flex gap-4 p-6 rounded-2xl bg-secondary/40 border border-secondary">
             <Info className="w-5 h-5 text-primary shrink-0 mt-0.5" />
             <div>
