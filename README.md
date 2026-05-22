@@ -1,6 +1,6 @@
 # Океана — Семейный клуб детского плавания
 
-Сайт клуба на React + Vite (монорепозиторий pnpm).
+Статический сайт на React + Vite в pnpm-монорепозитории. Продакшен-артефакт: `artifacts/okeana` (см. `.replit-artifact/artifact.toml`).
 
 ## Локальный запуск
 
@@ -9,7 +9,7 @@ pnpm install
 PORT=19289 BASE_PATH=/ pnpm --filter @workspace/okeana run dev
 ```
 
-Сайт: http://localhost:19289/
+Открыть: http://localhost:19289/
 
 ## Сборка
 
@@ -18,15 +18,42 @@ pnpm install
 pnpm run build:site
 ```
 
-Результат: `artifacts/okeana/dist/public`
+Результат: `artifacts/okeana/dist/` (`index.html` + `assets/`).
 
 ## Деплой на Vercel
 
-1. Импортируйте репозиторий [github.com/Mr1Greys/okean](https://github.com/Mr1Greys/okean) в [Vercel](https://vercel.com).
-2. Vercel подхватит настройки из `vercel.json` (pnpm, сборка, SPA-роутинг).
-3. В **Settings → Environment Variables** при необходимости добавьте:
-   - `PORT` = `4173`
-   - `BASE_PATH` = `/`
-4. После деплоя подключите бесплатный домен: **Settings → Domains** → `*.vercel.app` или свой домен.
+### 1. Настройки проекта (обязательно)
 
-Переменные `PORT` и `BASE_PATH` нужны для конфигурации Vite при сборке.
+В [Vercel Dashboard](https://vercel.com) → проект **okean** → **Settings** → **General**:
+
+| Поле | Значение |
+|------|----------|
+| **Root Directory** | `artifacts/okeana` |
+| **Framework Preset** | Other |
+| **Build Command** | *(оставить пустым — берётся из `artifacts/okeana/vercel.json`)* |
+| **Output Directory** | *(оставить пустым — берётся из `vercel.json`)* |
+| **Install Command** | *(оставить пустым)* |
+
+### 2. Убрать Production Overrides
+
+Если сборка ищет папку `public` или `dist` не там:
+
+1. **Settings** → **General** → **Framework Settings**
+2. Если есть жёлтое предупреждение **Production Overrides** — откройте и **сбросьте** переопределения Output Directory / Root Directory
+3. Сохраните и сделайте **Redeploy**
+
+### 3. Переменные окружения (опционально)
+
+Для dev на Replit: `PORT`, `BASE_PATH`. Для Vercel-сборки значения по умолчанию в `vite.config.ts` (`4173`, `/`). Добавлять в Vercel не обязательно.
+
+### 4. Домен
+
+После успешного деплоя: **Settings** → **Domains** → бесплатный `*.vercel.app` или свой домен.
+
+### Почему Root Directory = `artifacts/okeana`
+
+- Монорепозиторий: `pnpm install` должен выполняться из корня репозитория (`installCommand` в `artifacts/okeana/vercel.json`: `cd ../.. && pnpm install`)
+- Сборка: `pnpm --filter @workspace/okeana run build`
+- Статика: `artifacts/okeana/dist` относительно Root Directory → в UI это просто **`dist`**
+
+Конфиг в корне репозитория (`/vercel.json`) — запасной вариант, если Root Directory оставить пустым (корень репо).
