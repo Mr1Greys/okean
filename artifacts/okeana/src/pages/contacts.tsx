@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { MapPin, Phone, Clock, Mail, Send, CheckCircle } from "lucide-react";
+import { MapPin, Phone, Clock, Mail, Send, CheckCircle, Loader2 } from "lucide-react";
 import { SiVk, SiInstagram } from "react-icons/si";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { submitLead } from "@/lib/submit-lead";
+import { useToast } from "@/hooks/use-toast";
 
 const fadeUp = {
   initial: { opacity: 0, y: 24 },
@@ -26,13 +28,35 @@ const formSchema = z.object({
 
 export default function Contacts() {
   const [success, setSuccess] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { toast } = useToast();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: { name: "", phone: "", email: "", message: "" },
   });
 
-  function onSubmit() {
-    setTimeout(() => setSuccess(true), 400);
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    setIsSubmitting(true);
+    try {
+      await submitLead({
+        name: values.name,
+        phone: values.phone,
+        email: values.email,
+        program: "Обратная связь",
+        comment: values.message,
+        source: "contacts",
+      });
+      setSuccess(true);
+      form.reset();
+    } catch (err) {
+      toast({
+        variant: "destructive",
+        title: "Не удалось отправить",
+        description: err instanceof Error ? err.message : "Попробуйте позже или позвоните нам",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -181,9 +205,18 @@ export default function Contacts() {
                         <FormMessage />
                       </FormItem>
                     )} />
-                    <Button type="submit" className="w-full rounded-full h-12" data-testid="btn-submit">
-                      <Send className="w-4 h-4 mr-2" />
-                      Отправить
+                    <Button
+                      type="submit"
+                      className="w-full rounded-full h-12"
+                      disabled={isSubmitting}
+                      data-testid="btn-submit"
+                    >
+                      {isSubmitting ? (
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      ) : (
+                        <Send className="w-4 h-4 mr-2" />
+                      )}
+                      {isSubmitting ? "Отправка…" : "Отправить"}
                     </Button>
                   </form>
                 </Form>

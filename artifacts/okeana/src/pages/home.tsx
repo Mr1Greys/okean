@@ -48,58 +48,89 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-screen">
       {/* Hero Section */}
-      <section className="relative h-[90vh] min-h-[600px] flex items-center justify-center overflow-hidden bg-gradient-to-b from-primary/10 to-background">
-        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1519682577862-22b62b24e493?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center opacity-10 mix-blend-overlay"></div>
-        <div className="container mx-auto px-4 relative z-10 text-center flex flex-col items-center max-w-6xl">
+      <section className="relative isolate flex items-center overflow-hidden min-h-[min(68svh,34rem)] sm:min-h-[min(62svh,32rem)]">
+        <img
+          src={`${import.meta.env.BASE_URL}images/hero-pool.png`}
+          alt=""
+          className="absolute inset-0 h-full w-full object-cover object-[center_38%] scale-105"
+          fetchPriority="high"
+          decoding="async"
+        />
+        <div
+          className="absolute inset-0 bg-background/45"
+          aria-hidden
+        />
+        <div
+          className="absolute inset-0 bg-gradient-to-b from-background/15 via-background/35 to-background/88"
+          aria-hidden
+        />
+        <div
+          className="absolute inset-0 bg-gradient-to-r from-background/10 via-transparent to-background/10"
+          aria-hidden
+        />
+        <div className="absolute inset-0 bg-primary/[0.04]" aria-hidden />
+
+        <div className="container relative z-10 mx-auto w-full max-w-6xl px-4 py-12 sm:py-14 md:py-16">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            className="mx-auto flex max-w-3xl flex-col items-center text-center"
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
+            transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
           >
-            <span className="inline-block px-4 py-1.5 mb-6 rounded-full bg-primary/10 text-primary font-medium text-sm">
+            <span className="mb-4 inline-block rounded-full border border-primary/15 bg-background/80 px-4 py-1.5 text-sm font-semibold text-primary shadow-sm backdrop-blur-md sm:mb-5">
               Безопасно. Тепло. С любовью.
             </span>
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-foreground max-w-4xl mx-auto leading-tight mb-6">
-              Семейный клуб <br/>
+            <h1 className="mb-4 text-[clamp(1.75rem,5vw,3.25rem)] font-extrabold leading-[1.12] tracking-tight text-foreground sm:mb-5">
+              Семейный клуб
+              <br />
               <span className="text-primary">детского плавания</span>
             </h1>
-            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10">
-              Подарите вашему малышу радость свободного движения в чистой, тёплой воде. Сертифицированные инструкторы и бережная методика Birthlight.
+            <p className="mb-7 max-w-xl text-base leading-relaxed text-muted-foreground sm:mb-8 sm:text-lg">
+              Подарите малышу радость движения в чистой тёплой воде. Сертифицированные инструкторы и
+              бережная методика Birthlight.
             </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Button size="lg" className="w-full sm:w-auto rounded-full text-lg px-8 h-14" onClick={() => openModal()}>
+            <div className="flex w-full max-w-md flex-col items-stretch justify-center gap-3 sm:max-w-none sm:flex-row sm:items-center sm:gap-4">
+              <Button
+                size="lg"
+                className="h-12 w-full rounded-full px-8 text-base shadow-md sm:h-14 sm:w-auto sm:text-lg"
+                onClick={() => openModal()}
+              >
                 Записаться
               </Button>
-              <Button size="lg" variant="outline" className="w-full sm:w-auto rounded-full text-lg px-8 h-14 bg-background/50 backdrop-blur-sm" asChild>
+              <Button
+                size="lg"
+                variant="outline"
+                className="h-12 w-full rounded-full border-border/80 bg-background/75 px-8 text-base backdrop-blur-md sm:h-14 sm:w-auto sm:text-lg"
+                asChild
+              >
                 <Link href="/programs">Смотреть программы</Link>
               </Button>
             </div>
           </motion.div>
         </div>
-        
-        {/* Soft wave shape at bottom */}
-        <div className="absolute bottom-0 w-full overflow-hidden leading-none">
-          <svg className="relative block w-full h-[50px] md:h-[100px]" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
-            <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V120H0V95.8C59.71,118.08,130.83,123.15,190.79,114.16c58.31-8.77,114.1-26.65,170.6-38.38C327.06,73.19,324.23,65.34,321.39,56.44Z" className="fill-background"></path>
-          </svg>
-        </div>
-      </section>
 
-      {/* Promo Banner */}
-      <section className="bg-accent/10 border-y border-accent/20">
-        <div className="container mx-auto px-4 py-4 max-w-6xl">
-          <p className="text-center text-accent-foreground/80 font-medium">
-            ✨ 10% скидка и без вступительного взноса при заключении договора в октябре
-          </p>
+        <div className="pointer-events-none absolute bottom-0 w-full overflow-hidden leading-none">
+          <svg
+            className="relative block h-10 w-full sm:h-14 md:h-[4.5rem]"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 1200 120"
+            preserveAspectRatio="none"
+            aria-hidden
+          >
+            <path
+              d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V120H0V95.8C59.71,118.08,130.83,123.15,190.79,114.16c58.31-8.77,114.1-26.65,170.6-38.38C327.06,73.19,324.23,65.34,321.39,56.44Z"
+              className="fill-background"
+            />
+          </svg>
         </div>
       </section>
 
       {/* Advantages Strip */}
       <section className="py-16 md:py-24 bg-background">
         <div className="container mx-auto px-4 max-w-6xl">
-          <div className="flex overflow-x-auto pb-8 snap-x snap-mandatory hide-scrollbar gap-4 md:grid md:grid-cols-5 md:gap-6 md:pb-0 justify-center">
+          <div className="flex overflow-x-auto pb-8 snap-x snap-mandatory hide-scrollbar gap-4 md:grid md:grid-cols-5 md:gap-6 md:pb-0 md:justify-center -mx-4 px-4 scroll-pl-4">
             {ADVANTAGES.map((adv, i) => (
-              <div key={i} className="min-w-[200px] snap-center flex flex-col items-center text-center p-6 rounded-2xl bg-secondary/30">
+              <div key={i} className="min-w-[200px] shrink-0 snap-start flex flex-col items-center text-center p-6 rounded-2xl bg-secondary/30">
                 <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-primary mb-4">
                   <adv.icon className="w-8 h-8" />
                 </div>

@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import { Loader2 } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -27,58 +28,87 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useBookingModal } from "@/hooks/use-booking-modal";
+import { useBookingModalContext } from "@/context/booking-modal-context";
+import { programOptionsForSelect, resolveLeadProgram } from "@/lib/lead-form";
+import { submitLead } from "@/lib/submit-lead";
+import { useToast } from "@/hooks/use-toast";
 
 const formSchema = z.object({
   name: z.string().min(2, { message: "Введите имя" }),
-  phone: z.string().min(10, { message: "Введите корректный номер телефона" }),
+  phone: z
+    .string()
+    .min(10, { message: "Введите корректный номер телефона" })
+    .refine((v) => v.replace(/\D/g, "").length >= 10, {
+      message: "Введите корректный номер телефона",
+    }),
   email: z.string().email({ message: "Введите корректный email" }).optional().or(z.literal("")),
   program: z.string().min(1, { message: "Выберите программу" }),
   comment: z.string().optional(),
 });
 
+type FormValues = z.infer<typeof formSchema>;
+
 export function BookingModal() {
-  const store = useBookingModal();
-  const [open, setOpen] = useState(store.isOpen);
+  const { isOpen, selectedProgram, closeModal } = useBookingModalContext();
+  const { toast } = useToast();
   const [isSuccess, setIsSuccess] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  useEffect(() => {
-    return store.subscribe(() => {
-      setOpen(store.isOpen);
-      if (store.isOpen) {
-        setIsSuccess(false);
-        form.reset({
-          name: "",
-          phone: "",
-          email: "",
-          program: store.selectedProgram || "Свободное плавание",
-          comment: "",
-        });
-      }
-    });
-  }, []);
+  const programOptions = useMemo(
+    () => programOptionsForSelect(selectedProgram),
+    [selectedProgram],
+  );
 
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
       phone: "",
       email: "",
-      program: "",
+      program: "Не выбрано",
       comment: "",
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // Mock API call
-    setTimeout(() => {
+  useEffect(() => {
+    if (!isOpen) return;
+    setIsSuccess(false);
+    form.reset({
+      name: "",
+      phone: "",
+      email: "",
+      program: resolveLeadProgram(selectedProgram),
+      comment: "",
+    });
+  }, [isOpen, selectedProgram, form]);
+
+  async function onSubmit(values: FormValues) {
+    setIsSubmitting(true);
+    try {
+      await submitLead({
+        ...values,
+        source: "booking",
+      });
       setIsSuccess(true);
-    }, 500);
+    } catch (err) {
+      toast({
+        variant: "destructive",
+        title: "Не удалось отправить",
+        description: err instanceof Error ? err.message : "Попробуйте позже или позвоните нам",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
-    <Dialog open={open} onOpenChange={(val) => !val && store.closeModal()}>
-      <DialogContent className="sm:max-w-[425px]">
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        if (!open) closeModal();
+      }}
+    >
+      <DialogContent className="sm:max-w-[440px] max-h-[min(90dvh,720px)] overflow-y-auto">
         {isSuccess ? (
           <div className="flex flex-col items-center justify-center py-10 text-center">
             <div className="w-16 h-16 bg-primary/20 text-primary rounded-full flex items-center justify-center mb-4">
@@ -92,6 +122,7 @@ export function BookingModal() {
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
+                aria-hidden
               >
                 <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
                 <polyline points="22 4 12 14.01 9 11.01" />
@@ -101,7 +132,7 @@ export function BookingModal() {
             <DialogDescription className="text-base text-center">
               Мы перезвоним вам в течение 10–15 минут для подтверждения записи.
             </DialogDescription>
-            <Button className="mt-8" onClick={() => store.closeModal()}>
+            <Button className="mt-8 rounded-full" type="button" onClick={closeModal}>
               Закрыть
             </Button>
           </div>
@@ -110,19 +141,24 @@ export function BookingModal() {
             <DialogHeader>
               <DialogTitle>Записаться на занятие</DialogTitle>
               <DialogDescription>
-                Оставьте ваши контакты, и мы свяжемся с вами, чтобы подобрать удобное время.
+                Оставьте контакты — администратор свяжется с вами и подберёт удобное время.
               </DialogDescription>
             </DialogHeader>
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 py-4">
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 py-2">
                 <FormField
                   control={form.control}
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Имя</FormLabel>
+                      <FormLabel>Имя *</FormLabel>
                       <FormControl>
-                        <Input placeholder="Ваше имя" {...field} />
+                        <Input
+                          className="h-12 text-base"
+                          placeholder="Ваше имя"
+                          autoComplete="name"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -135,7 +171,14 @@ export function BookingModal() {
                     <FormItem>
                       <FormLabel>Телефон *</FormLabel>
                       <FormControl>
-                        <Input type="tel" placeholder="+7 (___) ___-__-__" {...field} />
+                        <Input
+                          type="tel"
+                          inputMode="tel"
+                          className="h-12 text-base"
+                          placeholder="+7 (___) ___-__-__"
+                          autoComplete="tel"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -146,9 +189,15 @@ export function BookingModal() {
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Email (необязательно)</FormLabel>
+                      <FormLabel>Email</FormLabel>
                       <FormControl>
-                        <Input type="email" placeholder="ваш@email.com" {...field} />
+                        <Input
+                          type="email"
+                          className="h-12 text-base"
+                          placeholder="ваш@email.com"
+                          autoComplete="email"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -159,20 +208,19 @@ export function BookingModal() {
                   name="program"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Программа</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormLabel>Программа *</FormLabel>
+                      <Select value={field.value} onValueChange={field.onChange}>
                         <FormControl>
-                          <SelectTrigger>
+                          <SelectTrigger className="h-12 text-base">
                             <SelectValue placeholder="Выберите программу" />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="Грудничковое плавание">Грудничковое плавание (0-1 год)</SelectItem>
-                          <SelectItem value="Раннее плавание">Раннее плавание (1-3 года)</SelectItem>
-                          <SelectItem value="Детское плавание">Детское плавание (3-10 лет)</SelectItem>
-                          <SelectItem value="Свободное плавание">Свободное плавание</SelectItem>
-                          <SelectItem value="Аква-йога для беременных">Аква-йога для беременных</SelectItem>
-                          <SelectItem value="Индивидуальное занятие">Индивидуальное занятие</SelectItem>
+                          {programOptions.map((program) => (
+                            <SelectItem key={program} value={program}>
+                              {program}
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                       <FormMessage />
@@ -184,11 +232,11 @@ export function BookingModal() {
                   name="comment"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Комментарий (необязательно)</FormLabel>
+                      <FormLabel>Комментарий</FormLabel>
                       <FormControl>
                         <Textarea
-                          placeholder="Возраст ребенка, особые пожелания..."
-                          className="resize-none"
+                          placeholder="Возраст ребёнка, удобное время, пожелания…"
+                          className="resize-none text-base min-h-[100px]"
                           {...field}
                         />
                       </FormControl>
@@ -196,9 +244,23 @@ export function BookingModal() {
                     </FormItem>
                   )}
                 />
-                <Button type="submit" className="w-full">
-                  Отправить заявку
+                <Button
+                  type="submit"
+                  className="w-full h-12 rounded-full text-base"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Отправка…
+                    </>
+                  ) : (
+                    "Отправить заявку"
+                  )}
                 </Button>
+                <p className="text-xs text-center text-muted-foreground">
+                  Нажимая кнопку, вы соглашаетесь на обработку персональных данных для связи с вами.
+                </p>
               </form>
             </Form>
           </>
