@@ -170,7 +170,7 @@ export default function About() {
 
       {/* CTA */}
       <section className="py-16 bg-primary text-primary-foreground">
-        <div className="container px-4 text-center">
+        <div className="container mx-auto flex max-w-3xl flex-col items-center px-4 text-center">
           <motion.div {...fadeUp}>
             <h2 className="text-3xl font-bold mb-4">Хотите узнать больше?</h2>
             <p className="text-primary-foreground/80 mb-8 text-lg">Запишитесь на пробное занятие и убедитесь сами</p>

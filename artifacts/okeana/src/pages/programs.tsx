@@ -233,10 +233,16 @@ export default function Programs() {
 
       {/* CTA */}
       <section className="py-16 bg-primary text-primary-foreground">
-        <div className="container px-4 text-center">
+        <div className="container mx-auto flex max-w-3xl flex-col items-center px-4 text-center">
           <h2 className="text-3xl font-bold mb-4">Не знаете, с чего начать?</h2>
-          <p className="text-primary-foreground/80 mb-8 text-lg">Запишитесь на пробное занятие — мы поможем выбрать программу</p>
-          <Button size="lg" onClick={() => openModal()} className="bg-white text-primary hover:bg-white/90 rounded-full px-10 h-14 text-lg font-semibold">
+          <p className="mb-8 max-w-xl text-lg text-primary-foreground/80">
+            Запишитесь на пробное занятие — мы поможем выбрать программу
+          </p>
+          <Button
+            size="lg"
+            onClick={() => openModal()}
+            className="h-14 rounded-full bg-white px-10 text-lg font-semibold text-primary hover:bg-white/90"
+          >
             Записаться на пробное
           </Button>
         </div>

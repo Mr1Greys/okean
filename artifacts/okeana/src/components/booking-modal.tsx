@@ -32,6 +32,8 @@ import { useBookingModalContext } from "@/context/booking-modal-context";
 import { programOptionsForSelect, resolveLeadProgram } from "@/lib/lead-form";
 import { submitLead } from "@/lib/submit-lead";
 import { useToast } from "@/hooks/use-toast";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { cn } from "@/lib/utils";
 
 const formSchema = z.object({
   name: z.string().min(2, { message: "Введите имя" }),
@@ -51,6 +53,7 @@ type FormValues = z.infer<typeof formSchema>;
 export function BookingModal() {
   const { isOpen, selectedProgram, closeModal } = useBookingModalContext();
   const { toast } = useToast();
+  const isMobile = useIsMobile();
   const [isSuccess, setIsSuccess] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -209,20 +212,46 @@ export function BookingModal() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Программа *</FormLabel>
-                      <Select value={field.value} onValueChange={field.onChange}>
+                      {isMobile ? (
                         <FormControl>
-                          <SelectTrigger className="h-12 text-base">
-                            <SelectValue placeholder="Выберите программу" />
-                          </SelectTrigger>
+                          <select
+                            className={cn(
+                              "flex h-12 w-full rounded-md border border-input bg-background px-3 py-2 text-base",
+                              "focus:outline-none focus:ring-1 focus:ring-ring",
+                            )}
+                            value={field.value}
+                            onChange={(e) => field.onChange(e.target.value)}
+                          >
+                            {programOptions.map((program) => (
+                              <option key={program} value={program}>
+                                {program}
+                              </option>
+                            ))}
+                          </select>
                         </FormControl>
-                        <SelectContent>
-                          {programOptions.map((program) => (
-                            <SelectItem key={program} value={program}>
-                              {program}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      ) : (
+                        <Select value={field.value} onValueChange={field.onChange}>
+                          <FormControl>
+                            <SelectTrigger className="h-12 text-base">
+                              <SelectValue placeholder="Выберите программу" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent
+                            position="popper"
+                            side="bottom"
+                            align="start"
+                            sideOffset={4}
+                            collisionPadding={{ top: 24, bottom: 24, left: 16, right: 16 }}
+                            className="max-h-[min(50dvh,16rem)]"
+                          >
+                            {programOptions.map((program) => (
+                              <SelectItem key={program} value={program}>
+                                {program}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      )}
                       <FormMessage />
                     </FormItem>
                   )}
